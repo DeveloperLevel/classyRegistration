@@ -20,47 +20,65 @@
 
 </head>
 
-<body style="background-color:black;">
+<body style="">
 
     <div class="container">
 
         <!-- Jumbotron -->
         <div class="jumbotron top">
             <h1>Classy Registration <small>Welcome to the Developer Level Classy Registration!</small></h1>
-            <p class="lead" style="font-style: italic; color: black;">This is where we will build a class driven registration page!</p>
+            <p class="lead">This is where we will build a class driven registration page!</p>
         </div>
         <!-- Registration Area -->
 
         <form class="form-horizontal">
             <div class="row">
-                <div class="form-group">
+                <div class="form-group col-sm-12">
                     <label for="inputEmail3" class="col-sm-2 control-label">Email</label>
                     <div class="col-sm-10">
                     <input type="email" class="form-control" id="inputEmail3" placeholder="Email">
                     </div>
                 </div>
-                <div class="form-group">
+            </div>
+            <div class="row">
+                <div class="form-group col-sm-12">
+                    <label for="inputEmail3" class="col-sm-2 control-label">Username</label>
+                    <div class="col-sm-10">
+                    <input type="text" class="form-control" id="inputUsername3" placeholder="Username">
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-sm-12">
+                    <label for="inputEmail3" class="col-sm-2 control-label">Full Name</label>
+                    <div class="col-sm-10">
+                    <input type="text" class="form-control" id="inputFullname3" placeholder="Full name">
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-sm-12">
                     <label for="inputPassword3" class="col-sm-2 control-label">Password</label>
                     <div class="col-sm-10">
                     <input type="password" class="form-control" id="inputPassword3" placeholder="Password">
                     </div>
                 </div>
-                <div class="form-group">
-                    <div class="col-sm-offset-2 col-sm-10">
-                    <div class="checkbox">
-                        <label>
-                        <input type="checkbox"> Remember me
-                        </label>
-                    </div>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="col-sm-offset-2 col-sm-10">
-                    <button type="submit" class="btn btn-default">Sign in</button>
+            </div>
+            <div class="row">
+                <div class="form-group col-sm-12">
+                    <label for="inputPassword3" class="col-sm-2 control-label">Verify Password</label>
+                    <div class="col-sm-10">
+                    <input type="password" class="form-control" id="inputVerifyPassword3" placeholder="Verify Password">
                     </div>
                 </div>
             </div>
-            <button type="button" class="btn btn-primary btn span3" id="submitRegistration">Register Now!</button>
+            <div class="row">
+                <div class="form-group col-sm-12">
+                    <div class="col-sm-offset-2 col-sm-10">
+                        <button type="button" class="btn btn-primary btn span3" id="submitRegistration">Register Now!</button>
+                    </div>
+                </div>
+            </div>
         </form>
     </div>
 
@@ -83,10 +101,94 @@
         if ((typeof $().modal != 'function')) { document.write('<script src="js/vendor/bootstrap.min.js"><\/script>'); }
     </script>
     <script>
-        
+        var User = function() {
+            this.fullName = "";
+            this.email = "";
+            this.password = "";
+            this.verifyPassword = "";
+            this.username = "";
+        };
+        var RegForm = function (nameField, emailField, passwordField, verifyPasswordField, usernameField, regButton) {
+            this.regButton = regButton;
+            this.nameField = nameField;
+            this.emailField = emailField;
+            this.passwordField = passwordField;
+            this.verifyPasswordField = verifyPasswordField;
+            this.usernameField = usernameField;
+            this.currentUser = new User();
+            this.lastError = null;
+            this.showErrors = function(errs) {
+                $('.error').remove();
+                errs.forEach(function(err, ind, arr) {
+                    err.displayElement.parent().prepend('<div class="alert alert-'+err.type+' error"><strong>'+err.header+'</strong> '+err.message+'</div>');
+                    this.lastError = err;
+                }, this);
+            }
+            this.verifyUser = function() {
+                var errs = [];
+                try {
+                    if(this.currentUser.fullName == "") { throw new RegError("Whoops!", "Full name can't be empty", "danger", this.nameField); }
+                } catch(err) {
+                    errs.push(err);
+                }
+                try {
+                    if(this.currentUser.email == "") { throw new RegError("Whoops!", "Email can't be empty", "danger", this.emailField); }
+                } catch(err) {
+                    errs.push(err);
+                }
+                try {
+                    if(this.currentUser.password == "") { throw new RegError("Whoops!", "Password can't be empty", "danger", this.passwordField); }
+                } catch(err) {
+                    errs.push(err);
+                }
+                try {
+                    if(this.currentUser.username == "") { throw new RegError("Whoops!", "User name can't be empty", "danger", this.usernameField); }
+                } catch(err) {
+                    errs.push(err);
+                }
+                try {
+                    if(this.currentUser.verifyPassword == "") { throw new RegError("Whoops!", "Verify Password can't be empty", "danger", this.verifyPasswordField); }
+                } catch(err) {
+                    errs.push(err);
+                }
+                try {
+                    if(this.currentUser.verifyPassword != this.currentUser.password) { throw new RegError("Whoops!", "Verify Password doesn't match password", "danger", this.verifyPasswordField); }
+                } catch(err) {
+                    errs.push(err);
+                }
+                this.showErrors(errs);
+            }
+            var self = this;
+            this.regButton.click(function () { self.verifyUser(); });
+            this.nameField.change(function () {
+                self.currentUser.fullName = $(this).val();
+            });
+            this.emailField.change(function () {
+                self.currentUser.email = $(this).val();
+            });
+            this.usernameField.change(function () {
+                self.currentUser.username = $(this).val();
+            });
+            this.passwordField.change(function () {
+                self.currentUser.password = $(this).val();
+            });
+            this.verifyPasswordField.change(function () {
+                self.currentUser.verifyPassword = $(this).val();
+            });
+        };
+        var RegError = function(header, msg, type, displayElement) {
+            this.header = header;
+            this.message = msg;
+            this.type = type;
+            this.displayElement = displayElement;
+        };
+        var regForm;
+        $(document).ready(function () {
+            regForm = new RegForm($('#inputFullname3'), $('#inputEmail3'), $('#inputPassword3'), $('#inputVerifyPassword3'), $('#inputUsername3'), $('#submitRegistration'));
+        });
     </script>
 </body>
-<footer>
+<footer style="text-align: center;">
     <details>
         <summary style="color:dimgray;">&copy; 2017 Developer Level</summary>
     </details>
