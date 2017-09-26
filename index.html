@@ -164,7 +164,9 @@
                 }
                 try {
                     if (this.currentUser.age == "") { throw new RegError("Whoops!", "You must've forgot your age!", "danger", this.ageField); }
-                    else if (this.currentUser.age < "18") { throw new RegError("Whoops!", "You're a youngin'!", "danger", this.ageField);}
+                    else if (parseInt(this.currentUser.age) < "18") { throw new RegError("Whoops!", "You're a youngin'!", "danger", this.ageField);}
+                    else if (isNaN(parseInt(this.currentUser.age))) { throw new RegError("Whoops!", "You, uh, have to use numbers for age.", "danger", this.ageField);}
+                    else if (parseInt(this.currentUser.age) > "110") { throw new RegError("Whoah now!", "Are you sure you're that old?", "danger", this.ageField);}
                 } catch (err) {
                     errs.push(err);                
                 }                
