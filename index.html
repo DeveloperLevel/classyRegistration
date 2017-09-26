@@ -74,8 +74,17 @@
             </div>
             <div class="row">
                 <div class="form-group col-sm-12">
+                    <label for="inputAge3" class="col-sm-2 control-label">Age</label>
+                    <div class="col-sm-10">
+                    <input type="text" class="form-control" id="inputAge3" placeholder="Verify Age">
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-sm-12">
                     <div class="col-sm-offset-2 col-sm-10">
                         <button type="button" class="btn btn-primary btn span3" id="submitRegistration">Register Now!</button>
+                        <button type="reset" class="btn btn-danger" id="btnReset">Reset</button>
                     </div>
                 </div>
             </div>
@@ -107,13 +116,15 @@
             this.password = "";
             this.verifyPassword = "";
             this.username = "";
+            this.age = "";
         };
-        var RegForm = function (nameField, emailField, passwordField, verifyPasswordField, usernameField, regButton) {
+        var RegForm = function (nameField, emailField, passwordField, verifyPasswordField, usernameField, ageField, regButton) {
             this.regButton = regButton;
             this.nameField = nameField;
             this.emailField = emailField;
             this.passwordField = passwordField;
             this.verifyPasswordField = verifyPasswordField;
+            this.ageField = ageField;
             this.usernameField = usernameField;
             this.currentUser = new User();
             this.lastError = null;
@@ -152,6 +163,12 @@
                     errs.push(err);
                 }
                 try {
+                    if (this.currentUser.age == "") { throw new RegError("Whoops!", "You must've forgot your age!", "danger", this.ageField); }
+                    else if (this.currentUser.age < "18") { throw new RegError("Whoops!", "You're a youngin'!", "danger", this.ageField);}
+                } catch (err) {
+                    errs.push(err);                
+                }                
+                try {
                     if(this.currentUser.verifyPassword != this.currentUser.password) { throw new RegError("Whoops!", "Verify Password doesn't match password", "danger", this.verifyPasswordField); }
                 } catch(err) {
                     errs.push(err);
@@ -175,6 +192,9 @@
             this.verifyPasswordField.change(function () {
                 self.currentUser.verifyPassword = $(this).val();
             });
+            this.ageField.change(function () {
+                self.currentUser.age = $(this).val();
+            });
         };
         var RegError = function(header, msg, type, displayElement) {
             this.header = header;
@@ -184,7 +204,10 @@
         };
         var regForm;
         $(document).ready(function () {
-            regForm = new RegForm($('#inputFullname3'), $('#inputEmail3'), $('#inputPassword3'), $('#inputVerifyPassword3'), $('#inputUsername3'), $('#submitRegistration'));
+            regForm = new RegForm($('#inputFullname3'), $('#inputEmail3'), $('#inputPassword3'), $('#inputVerifyPassword3'), $('#inputUsername3'), $('#inputAge3'), $('#submitRegistration'));
+        });
+        $('#btnReset').click(function(){
+            $('.error').remove();
         });
     </script>
 </body>
